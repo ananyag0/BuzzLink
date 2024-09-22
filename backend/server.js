@@ -7,8 +7,7 @@ const app = express();
 const port = 8001;
 
 //Connect to MongoDB
-mongoose.connect('mongodb+srv://krishkp00:urFavMRfZYDYF0Ez@buzzlinkcluster.7figs.mongodb.net/?retryWrites=true&w=majority&appName=BuzzLinkCluster', 
-  {useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://krishkp00:urFavMRfZYDYF0Ez@buzzlinkcluster.7figs.mongodb.net/?retryWrites=true&w=majority&appName=BuzzLinkCluster');
 
 mongoose.connection.once("open", function() {
   console.log("MongoDB connection established");
