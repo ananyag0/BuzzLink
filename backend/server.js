@@ -14,6 +14,21 @@ mongoose.connection.once("open", function() {
   console.log("MongoDB connection established");
 });
 
+const usersSchema = new mongoose.Schema({
+  displayName: String,
+  email: Boolean,
+  password: String,
+});
+
+const roomsSchema = new mongoose.Schema({
+  roomName: String,
+  roomType: String,
+  particpantLimit: Number,
+});
+
+const Users = mongoose.model('Users', usersSchema);
+const Rooms = mongoose.model('Rooms', roomsSchema);
+
 app.use(cors());
 
 app.get('/hello', (req, res) => {
