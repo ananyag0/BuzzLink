@@ -1,20 +1,21 @@
 const express = require('express');
 const cors = require('cors');
-const auth = require('./auth');
+const { getDb, getToken, emailChecker, hashPassword, passwordChecker, tokenVerifier, verifyPassword } = require('./auth');
 
 const app = express();
 
 const port = 8001;
 
 app.use(cors());
-app.use(express.json());
+
+app.use(express.json()); // store request body in req.body
 
 async function runServer() {
 
-  const db = await auth.getDb();
+  const db = await getDb();
   const users = db.collection('users');
 
-  app.post('/register', auth.emailPasswordChecker, async (req, res) => {
+  app.post('/register', emailChecker, passwordChecker, async (req, res) => {
 
     // request body may be something like this
     const { email, password, nickname } = req.body;
@@ -32,7 +33,7 @@ async function runServer() {
     }
 
     // hash the password and then insert into db
-    const hashed = await auth.hashPassword(password);
+    const hashed = await hashPassword(password);
     const insertBody = {
       email,
       password: hashed,
@@ -47,10 +48,9 @@ async function runServer() {
       console.log('err: ', err);
       res.status(400).send('Register fails');
     }
-
   });
 
-  app.post('/login', auth.emailPasswordChecker, async (req, res) => {
+  app.post('/login', emailChecker, passwordChecker, async (req, res) => {
     const { email, password } = req.body;
     const found = await users.findOne({ email });
 
@@ -62,7 +62,7 @@ async function runServer() {
 
     // If the password is incorrect, end there
     // Otherwise, generate and send back the token
-    const match = await auth.verifyPassword(password, found.password);
+    const match = await verifyPassword(password, found.password);
     if (!match) {
       res.status(400).send('The password is incorrect');
       return;
@@ -73,20 +73,19 @@ async function runServer() {
       nickname: found.nickname,
       email: found.email,
     };
-    const token = auth.getToken(tokenPayload);
+    const token = getToken(tokenPayload);
     res.send(token);
-
   });
 
-  app.post('/reset-password', auth.tokenVerifier, async (req, res) => {
+  app.post('/reset-password', tokenVerifier, async (req, res) => {
     const { newPassword } = req.body;
     if (!newPassword) {
       res.status(400).send('No new password provided');
       return;
-    } 
+    }
 
     // hash the new password and then update the db
-    const newHashedPassword = await auth.hashPassword(newPassword);
+    const newHashedPassword = await hashPassword(newPassword);
     try {
       await users.updateOne({
         email: req.tokenBody.email
@@ -98,6 +97,19 @@ async function runServer() {
       console.log('error when updating: ', req.tokenBody);
       console.log('err: ', err);
       res.status(400).send('Update fails');
+    }
+  });
+
+  app.get('/test', tokenVerifier, async (req, res) => {
+    // a test endpoint to get data for a user
+    try {
+      const result = await users.findOne({
+        email: req.tokenBody.email
+      });
+      res.send(result);
+    } catch (err) {
+      console.log('err: ', err);
+      res.status(400).send('err ');
     }
   });
 

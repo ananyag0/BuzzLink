@@ -5,7 +5,8 @@ const jwt = require('jsonwebtoken');
 const secretKey = 'buzzlink~secretKey~';
 
 /**
- * return a db instance for test
+ * return a testing db instance
+ * @return db
  * */
 async function getDb() {
   const myUrl = 'mongodb://localhost:27017';
@@ -17,7 +18,7 @@ async function getDb() {
 }
 
 /**
- * hash a password and return it
+ * hash a password and return the hashed result
  * @return hashed password
  * */
 async function hashPassword(password) {
@@ -41,15 +42,23 @@ async function verifyPassword(password, hashed) {
 }
 
 /**
- * <p>This middleware verifies if the request headers contain valid token </p>
- * <p>If it does, parse the content of token and store it in req.tokenBody </p>
- * <p>Otherwise, immediately end the response. </p>
+ * <p>This middleware verifies if the request headers contain valid token. </p>
+ * <p>If it does, parse the content of token and store it in req.tokenBody. </p>
+ * <p>Otherwise, immediately end the response with status 400. </p>
  * The middleware should be used before most APIs that require some authorization.
  * */
 function tokenVerifier(req, res, next) {
-  const token = req.headers['authorization'].split(' ')[1];
+  try {
+    var token = req.headers['authorization'].split(' ')[1];
+  } catch (err) {
+    console.log('err when reading spliting authorization header, the headers are ', req.headers);
+    console.log('err: ', err);
+    res.status(400).send('Invalid token');
+    return;
+  }
   const tokenBody = verifyToken(token);
   if (!tokenBody) {
+    console.log('invalid token');
     res.status(400).send('Invalid token');
   } else {
     req.tokenBody = tokenBody;
@@ -58,13 +67,23 @@ function tokenVerifier(req, res, next) {
 }
 
 /**
- * This middleware checks if the request body contains non-null email and password
+ * <p>This middleware checks if the request body contains non-null email </p>
+ * <p>If the email is absent, the response is sent back with status 400 </p>
  * */
-function emailPasswordChecker(req, res, next) {
-  const { email, password } = req.body;
-  if (!email) {
+function emailChecker(req, res, next) {
+  if (!req.body.email) {
     res.status(400).send('No email provided');
-  } else if (!password) {
+  } else {
+    next();
+  }
+}
+
+/**
+ * <p>This middleware checks if the request body contains non-null password </p>
+ * <p>If the password is absent, the response is sent back with status 400 </p>
+ * */
+function passwordChecker(req, res, next) {
+  if (!req.body.password) {
     res.status(400).send('No password provided');
   } else {
     next();
@@ -82,6 +101,11 @@ function getToken(payload) {
   return token;
 }
 
+/**
+ * a helper function used in tokenVerifier
+ * @param token to verify
+ * @return the token body if succeeds or false otherwise
+ * */
 function verifyToken(token) {
   try {
     const body = jwt.verify(token, secretKey);
@@ -99,5 +123,6 @@ module.exports = {
   verifyPassword,
   getToken,
   tokenVerifier,
-  emailPasswordChecker,
+  emailChecker,
+  passwordChecker,
 };
