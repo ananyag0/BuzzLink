@@ -23,10 +23,17 @@ const roomsSchema = new mongoose.Schema({
   roomName: String,
   roomType: String,
   particpantLimit: Number,
+  participants: [{ type: app.mongoose.Schema.ObjectId, ref: 'Users'}]
+});
+
+const sessionsSchema = new mongoose.Schema({
+  
 });
 
 const Users = mongoose.model('Users', usersSchema);
 const Rooms = mongoose.model('Rooms', roomsSchema);
+const Sessions = mongoose.model('Sessions', sessionsSchema);
+
 
 app.use(cors());
 
