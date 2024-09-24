@@ -23,7 +23,7 @@ const roomsSchema = new mongoose.Schema({
   roomName: String,
   roomType: String,
   particpantLimit: Number,
-  participants: [{ type: app.mongoose.Schema.ObjectId, ref: 'Users'}]
+  //participants: [{ type: app.mongoose.Schema.ObjectId, ref: 'Users'}]
 });
 
 const sessionsSchema = new mongoose.Schema({
