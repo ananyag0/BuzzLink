@@ -1,10 +1,57 @@
 const express = require('express');
 const cors = require('cors');
-const { getDb, getToken, emailChecker, hashPassword, passwordChecker, tokenVerifier, verifyPassword } = require('./auth');
+const { getToken, emailChecker, hashPassword, passwordChecker, tokenVerifier, verifyPassword } = require('./auth');
+const mongoose = require('mongoose');
 
 const app = express();
 
 const port = 8001;
+
+/**
+ * The async function initialize the mongodb and returns its models
+ * */
+async function initMongodb() {
+
+  //Connect to MongoDB
+
+  // url_test is the url of the tesing database
+  const url_buzzlink = 'mongodb+srv://krishkp00:urFavMRfZYDYF0Ez@buzzlinkcluster.7figs.mongodb.net/BuzzLink?retryWrites=true&w=majority&appName=BuzzLinkCluster'
+  const url_test = 'mongodb+srv://krishkp00:urFavMRfZYDYF0Ez@buzzlinkcluster.7figs.mongodb.net/?retryWrites=true&w=majority&appName=BuzzLinkCluster'
+
+  await mongoose.connect(url_buzzlink);
+
+  console.log('MongoDB connection established');
+
+  const usersSchema = new mongoose.Schema({
+    displayName: String,
+    email: String, // this was Boolean. I assume it is a typo
+    password: String,
+  }, {
+    collection: 'Users'
+  });
+
+  const roomsSchema = new mongoose.Schema({
+    roomName: String,
+    roomType: String,
+    particpantLimit: Number,
+    //participants: [{ type: app.mongoose.Schema.ObjectId, ref: 'Users'}]
+  }, {
+    collection: 'Rooms'
+  });
+
+  const sessionsSchema = new mongoose.Schema({
+  
+  }, {
+    collection: 'Sessions'
+  });
+
+  const Users = mongoose.model('Users', usersSchema);
+  const Rooms = mongoose.model('Rooms', roomsSchema);
+  const Sessions = mongoose.model('Sessions', sessionsSchema);
+
+  return { Users, Rooms, Sessions };
+}
+
 
 app.use(cors());
 
@@ -12,21 +59,20 @@ app.use(express.json()); // store request body in req.body
 
 async function runServer() {
 
-  const db = await getDb();
-  const users = db.collection('users');
+  const { Users } = await initMongodb();
 
   app.post('/register', emailChecker, passwordChecker, async (req, res) => {
 
     // request body may be something like this
-    const { email, password, nickname } = req.body;
+    const { email, password, displayName } = req.body;
 
-    if (!nickname) {
-      res.status(400).send('No nickname provided');
+    if (!displayName) {
+      res.status(400).send('No displayName provided');
       return;
     }
 
     // Check if there exists an account with the same email
-    const found = await users.findOne({ email });
+    const found = await Users.findOne({ email });
     if (found) {
       res.status(400).send('Email already exists');
       return;
@@ -37,11 +83,11 @@ async function runServer() {
     const insertBody = {
       email,
       password: hashed,
-      nickname
+      displayName
     };
 
     try {
-      await users.insertOne(insertBody);
+      await Users.create(insertBody);
       res.send('Register succeeds');
     } catch (err) {
       console.log('error when trying to insert: ', insertBody);
@@ -52,7 +98,8 @@ async function runServer() {
 
   app.post('/login', emailChecker, passwordChecker, async (req, res) => {
     const { email, password } = req.body;
-    const found = await users.findOne({ email });
+    // const found = await users.findOne({ email });
+    const found = await Users.findOne({ email });
 
     // if not such email
     if (found === null) {
@@ -70,7 +117,7 @@ async function runServer() {
 
     const tokenPayload = {
       id: found._id,
-      nickname: found.nickname,
+      displayName: found.displayName,
       email: found.email,
     };
     const token = getToken(tokenPayload);
@@ -87,7 +134,7 @@ async function runServer() {
     // hash the new password and then update the db
     const newHashedPassword = await hashPassword(newPassword);
     try {
-      await users.updateOne({
+      await Users.updateOne({
         email: req.tokenBody.email
       }, {
         $set: { password: newHashedPassword }
@@ -103,7 +150,7 @@ async function runServer() {
   app.get('/test', tokenVerifier, async (req, res) => {
     // a test endpoint to get data for a user
     try {
-      const result = await users.findOne({
+      const result = await Users.findOne({
         email: req.tokenBody.email
       });
       res.send(result);

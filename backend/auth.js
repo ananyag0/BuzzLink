@@ -8,7 +8,7 @@ const secretKey = 'buzzlink~secretKey~';
  * return a testing db instance
  * @return db
  * */
-async function getDb() {
+async function getTestDb() {
   const myUrl = 'mongodb://localhost:27017';
   const dbName = 'test';
   const client = new mongodb.MongoClient(myUrl);
@@ -118,7 +118,6 @@ function verifyToken(token) {
 }
 
 module.exports = {
-  getDb,
   hashPassword,
   verifyPassword,
   getToken,
