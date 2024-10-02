@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const { getToken, emailChecker, hashPassword, passwordChecker, tokenVerifier, verifyPassword } = require('./auth');
 const mongoose = require('mongoose');
+const roomRoutes = require('./routes/rooms')
+
 
 const app = express();
 
@@ -18,7 +20,7 @@ async function initMongodb() {
   const url_buzzlink = 'mongodb+srv://krishkp00:urFavMRfZYDYF0Ez@buzzlinkcluster.7figs.mongodb.net/BuzzLink?retryWrites=true&w=majority&appName=BuzzLinkCluster'
   const url_test = 'mongodb+srv://krishkp00:urFavMRfZYDYF0Ez@buzzlinkcluster.7figs.mongodb.net/?retryWrites=true&w=majority&appName=BuzzLinkCluster'
 
-  await mongoose.connect(url_buzzlink);
+  await mongoose.connect(url_test);
 
   console.log('MongoDB connection established');
 
@@ -33,15 +35,16 @@ async function initMongodb() {
   const roomsSchema = new mongoose.Schema({
     roomName: String,
     roomType: String,
-    particpantLimit: Number,
-    participants: [{ type: mongoose.Schema.ObjectId, ref: 'Users'}],
-    isLocked: Boolean,
+
+    participantLimit: Number,
+    //participants: [{ type: app.mongoose.Schema.ObjectId, ref: 'Users'}]
+
   }, {
     collection: 'Rooms'
   });
 
   const sessionsSchema = new mongoose.Schema({
-  
+    
   }, {
     collection: 'Sessions'
   });
@@ -54,9 +57,12 @@ async function initMongodb() {
 }
 
 
+
 app.use(cors());
 
 app.use(express.json()); // store request body in req.body
+
+app.use('/api/rooms', roomRoutes)
 
 async function runServer() {
 
@@ -168,6 +174,7 @@ async function runServer() {
   app.listen(port, () => {
     console.log('the server is running at: ', port);
   });
+
 }
 
 runServer();
