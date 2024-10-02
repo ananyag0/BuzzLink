@@ -3,7 +3,7 @@ const cors = require('cors');
 const { getToken, emailChecker, hashPassword, passwordChecker, tokenVerifier, verifyPassword } = require('./auth');
 const mongoose = require('mongoose');
 const roomRoutes = require('./routes/rooms')
-console.log("roomRoutes was required")
+
 
 const app = express();
 
@@ -54,11 +54,13 @@ async function initMongodb() {
   return { Users, Rooms, Sessions };
 }
 
-app.use('/api/rooms', roomRoutes)
+
 
 app.use(cors());
 
 app.use(express.json()); // store request body in req.body
+
+app.use('/api/rooms', roomRoutes)
 
 async function runServer() {
 

@@ -1,4 +1,3 @@
-console.log("rooms.js is here")
 
 const express = require('express')
 const router = express.Router()
