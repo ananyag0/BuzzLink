@@ -26,7 +26,7 @@ async function initMongodb() {
 
   const usersSchema = new mongoose.Schema({
     displayName: String,
-    email: String, // this was Boolean. I assume it is a typo
+    email: String,
     password: String,
   }, {
     collection: 'Users'
@@ -35,8 +35,10 @@ async function initMongodb() {
   const roomsSchema = new mongoose.Schema({
     roomName: String,
     roomType: String,
+
     participantLimit: Number,
     //participants: [{ type: app.mongoose.Schema.ObjectId, ref: 'Users'}]
+
   }, {
     collection: 'Rooms'
   });
