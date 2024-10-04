@@ -1,0 +1,40 @@
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    vertical-align: baseline;
+    background: transparent;
+}
+
+.titlebar {
+    background-color: #203E62;
+    height: 100px;
+}
+
+@font-face {
+    font-family: 'Cabin', sans-serif;
+    src: url(https://fonts.googleapis.com/css?family=Cabin);
+}
+
+.title {
+    color: #F0D097;
+    font-family: 'Cabin';
+    font-size: 48px;
+    font-weight: 500;
+    font-style: italic;
+    padding: 1.2%;
+}
+
+.divider {
+    background-color: #F0D097;
+    height: 10px;
+}
+
+.meeting{
+
+}
+
+.participantView{
+
+}
