@@ -5,7 +5,6 @@ export function Titlebar() {
                 <p className="title">BuzzLink</p>
             </div>
             <div className="divider">
-
             </div>
         </>
     )
