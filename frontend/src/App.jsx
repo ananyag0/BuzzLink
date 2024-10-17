@@ -1,14 +1,19 @@
 import { useState } from 'react'
 import './App.css'
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
+import { Meeting } from './pages/meeting'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <div>
-      Hello World with count: 
-      <button onClick={() => setCount(count + 1)}>{count}</button>
-    </div>
+    <>
+      <Router>
+        <Routes>
+          <Route path='/meeting' element={<Meeting />} />
+        </Routes>
+      </Router>
+    </>
   )
 }
 
