@@ -10,7 +10,7 @@ export function Meeting() {
     const Sam = {displayName: "Sam"}
     const Josh = {displayName: "Josh"}
 
-    var participants = [Krish, Sam, Josh, Krish, Sam, Krish, Krish, Sam, Josh, Krish, Sam, Josh, Krish, Sam, Josh, Krish]
+    var participants = [Krish, Sam, Josh, Krish, Sam, Krish, Krish, Sam, Josh, Krish, Sam, Josh, Krish, Sam, Josh, Krish, Krish, Josh, Sam, Josh, Krish]
 
     return (
         <>
