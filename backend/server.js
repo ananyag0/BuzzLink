@@ -2,7 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const { getToken, emailChecker, hashPassword, passwordChecker, tokenVerifier, verifyPassword } = require('./auth');
 const mongoose = require('mongoose');
-const roomRoutes = require('./routes/rooms')
+const roomRoutes = require('./routes/rooms');
+const http = require('http');
+const setupSignalingServer = require('./signaling');
 
 
 const app = express();
@@ -17,8 +19,8 @@ async function initMongodb() {
   //Connect to MongoDB
 
   // url_test is the url of the tesing database
-  const url_buzzlink = 'mongodb+srv://krishkp00:urFavMRfZYDYF0Ez@buzzlinkcluster.7figs.mongodb.net/BuzzLink?retryWrites=true&w=majority&appName=BuzzLinkCluster'
-  const url_test = 'mongodb+srv://krishkp00:urFavMRfZYDYF0Ez@buzzlinkcluster.7figs.mongodb.net/?retryWrites=true&w=majority&appName=BuzzLinkCluster'
+  const url_buzzlink = 'mongodb+srv://krishkp00:urFavMRfZYDYF0Ez@buzzlinkcluster.7figs.mongodb.net/BuzzLink?retryWrites=true&w=majority&appName=BuzzLinkCluster';
+  const url_test = 'mongodb+srv://krishkp00:urFavMRfZYDYF0Ez@buzzlinkcluster.7figs.mongodb.net/?retryWrites=true&w=majority&appName=BuzzLinkCluster';
 
   await mongoose.connect(url_test);
 
@@ -56,13 +58,15 @@ async function initMongodb() {
   return { Users, Rooms, Sessions };
 }
 
-
+const server = http.createServer(app);
 
 app.use(cors());
 
 app.use(express.json()); // store request body in req.body
 
-app.use('/api/rooms', roomRoutes)
+app.use('/api/rooms', roomRoutes);
+
+setupSignalingServer(server);
 
 async function runServer() {
 
@@ -171,7 +175,7 @@ async function runServer() {
     res.send('The answer for hello!');
   });
 
-  app.listen(port, () => {
+  server.listen(port, () => {
     console.log('the server is running at: ', port);
   });
 
