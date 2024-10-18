@@ -11,6 +11,10 @@ const socketio = require('socket.io');
  * B: answer -> server
  * server: answer -> A
  * 
+ * candidate is also exchanged during the process:
+ * A/B: candidate -> server
+ * server: candidate -> B/A
+ * 
  * */
 function setupSignalingServer(server) {
   const io = new socketio.Server(server, {
@@ -19,20 +23,28 @@ function setupSignalingServer(server) {
     }
   });
 
+  const userList = [];
+  const pairs = new Map();
+
   io.on('connection', socket => {
-    console.log('a connection of socket');
+    console.log('Connectin from a client');
 
     socket.on('join', userID => {
       socket.join(userID);
+      socket.userID = userID;
+      socket.emit('current_users', userList);
+      io.except(userID).emit('peer_join', userID);
+      userList.push(userID);
     });
 
     socket.on('call_request', body => {
-      const { fromID, toID } = body;
-      io.to(toID).emit('call_request', fromID);
+      io.to(body.toID).emit('call_request', body);
     }); 
 
     socket.on('call_accept', body => {
       const { fromID, toID } = body;
+      pairs.set(fromID, toID);
+      pairs.set(toID, fromID);
       io.to([fromID, toID]).emit('call_start', body);
     });
 
@@ -50,6 +62,22 @@ function setupSignalingServer(server) {
 
     socket.on('candidate', (toWhom, candidate) => {
       io.to(toWhom).emit('candidate', candidate);
+    });
+
+    socket.on('communication_stop', (communicators) => {
+      for (const one of communicators) {
+        pairs.delete(one);
+      }
+      io.to(communicators).emit('communication_stop');
+    });
+
+    socket.on('disconnect', () => {
+      const another = pairs.get(socket.userID);
+      pairs.delete(socket.userID);
+      pairs.delete(another);
+      console.log(`the user ${socket.userID} has disconnected`);
+      io.except(socket.userID).emit('peer_leave', socket.userID);
+      io.to(another).emit('communication_stop');
     });
 
   });

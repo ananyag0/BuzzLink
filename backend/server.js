@@ -4,11 +4,14 @@ const { getToken, emailChecker, hashPassword, passwordChecker, tokenVerifier, ve
 const mongoose = require('mongoose');
 const roomRoutes = require('./routes/rooms');
 const http = require('http');
+const twilio = require('twilio');
 const setupSignalingServer = require('./signaling');
 
+// const twilioAccountSID = '';
+// const twilioAuthToken = '';
+// const twilioClient = twilio(twilioAccountSID, twilioAuthToken);
 
 const app = express();
-
 const port = 8001;
 
 /**
@@ -22,6 +25,8 @@ async function initMongodb() {
   const url_buzzlink = 'mongodb+srv://krishkp00:urFavMRfZYDYF0Ez@buzzlinkcluster.7figs.mongodb.net/BuzzLink?retryWrites=true&w=majority&appName=BuzzLinkCluster';
   const url_test = 'mongodb+srv://krishkp00:urFavMRfZYDYF0Ez@buzzlinkcluster.7figs.mongodb.net/?retryWrites=true&w=majority&appName=BuzzLinkCluster';
 
+  console.log('trying to connect mongoose');
+  
   await mongoose.connect(url_test);
 
   console.log('MongoDB connection established');
@@ -157,6 +162,16 @@ async function runServer() {
       res.status(400).send('Update fails');
     }
   });
+
+  // app.get('/ice', async (req, res) => {
+  //   try {
+  //     const token = await twilioClient.tokens.create();
+  //     res.json(token.iceServers);
+  //   } catch (err) {
+  //     console.error('Error generating twilio token:', err); 
+  //     res.status(500).send('Error generating twilio token');
+  //   }
+  // });
 
   app.get('/test', tokenVerifier, async (req, res) => {
     // a test endpoint to get data for a user
