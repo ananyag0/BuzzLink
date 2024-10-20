@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import './App.css'
+
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import { Meeting } from './pages/meeting'
 
-function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <>
@@ -15,6 +14,7 @@ function App() {
       </Router>
     </>
   )
+
 }
 
 export default App
