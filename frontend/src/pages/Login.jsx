@@ -1,9 +1,9 @@
-import { useState } from 'react'
-import './App.css'
-import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom';
+import { useState } from 'react';
+import auth0 from 'auth0-js';
+import './Login.css';
 
 
-function App({routes}) {
+function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
@@ -17,18 +17,19 @@ function App({routes}) {
     window.alert(`User: ${email} \nPassword: ${password}`);
 
     //can access the user's input for email and password here, connect to backend?
-
-    // find a way to redirect to either the homepage (if login information is correct) or add/unhide incorrect login message (if login information is incorrect)
-    window.location.href = "";
-
   }
+
+  const {
+    user,
+    isAuthenticated,
+    loginWithRedirect,
+    logout,
+  } = useAuth0();
 
 
 
 
   return (
-
-    //login page
 
     <div className = 'bgDeco'>
       <div className = 'mainContainer'>
@@ -42,19 +43,16 @@ function App({routes}) {
               <button className='submitButton' type="submit">Log In</button>
         </form>
         <br/>
-        <a href= "<Forgot/>" className='forgotPassword'>Forgot Password?</a>
+        <a href= "/forgot" target = "_blank" className='forgotPassword'>Forgot Password?</a>
         <br/>
         <div className='orDivider'>—————<div className='smallSizeOr'> OR </div>—————</div>
         <br/>
-        <div className='createAccount'>Create Account</div>
+        <a href = "/create" target = "_blank" className='createAccount'>Create Account</a>
       </div>
     </div >
 
-
-
-  
   )
 
 }
 
-export default App
+export default Login
