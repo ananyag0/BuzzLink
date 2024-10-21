@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import auth0 from 'auth0-js';
+// import auth0 from 'auth0-js';
 import './Login.css';
 
 
@@ -19,12 +19,12 @@ function Login() {
     //can access the user's input for email and password here, connect to backend?
   }
 
-  const {
-    user,
-    isAuthenticated,
-    loginWithRedirect,
-    logout,
-  } = useAuth0();
+  // const {
+  //   user,
+  //   isAuthenticated,
+  //   loginWithRedirect,
+  //   logout,
+  // } = useAuth0();
 
 
 
