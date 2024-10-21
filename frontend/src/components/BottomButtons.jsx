@@ -3,6 +3,7 @@ import { faMessage, faVideo, faVideoSlash, faMicrophone, faMicrophoneSlash } fro
 import { useContext } from 'react'
 import { VisibilityContext } from './VisibilityContext'
 import { useState } from 'react'
+import './Components.css'
 
 export function BottomButtons() {
     //Used to toggle chat visibility across different components

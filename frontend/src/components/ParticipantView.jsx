@@ -1,4 +1,4 @@
-
+import './Components.css'
 
 export function ParticipantView({participant}) {
     return (
