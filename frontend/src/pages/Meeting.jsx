@@ -5,7 +5,7 @@ import { BottomButtons } from "../components/BottomButtons"
 import { VisibilityProvider } from "../components/VisibilityContext"
 import './Meeting.css'
 
-export function Meeting() {
+function Meeting() {
     //Sample Room Participants
     const Krish = {displayName: "Krish"}
     const Sam = {displayName: "Sam"}
@@ -35,3 +35,5 @@ export function Meeting() {
         </>
     )
   }
+
+export default Meeting

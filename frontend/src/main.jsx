@@ -12,7 +12,7 @@ import Login from "./pages/Login";
 import ErrorPage from "./error-page";
 import Forgot from "./pages/Forgot";
 import Create from "./pages/Create";
-import { Meeting } from './pages/meeting.jsx';
+import Meeting from './pages/Meeting.jsx';
 import Chatroom from './chatroom.jsx';
 
 
