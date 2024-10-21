@@ -3,6 +3,7 @@ import { ParticipantView } from "../components/ParticipantView"
 import { Chat } from "../components/Chat"
 import { BottomButtons } from "../components/BottomButtons"
 import { VisibilityProvider } from "../components/VisibilityContext"
+import './Meeting.css'
 
 export function Meeting() {
     //Sample Room Participants

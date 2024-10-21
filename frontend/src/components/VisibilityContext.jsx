@@ -1,4 +1,5 @@
 import React, { createContext, useState } from 'react';
+import './Components.css'
 
 const VisibilityContext = createContext();
 
