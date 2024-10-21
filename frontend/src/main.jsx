@@ -14,6 +14,7 @@ import Forgot from "./pages/Forgot";
 import Create from "./pages/Create";
 import Meeting from './pages/Meeting.jsx';
 import Chatroom from './chatroom.jsx';
+import Home from './pages/Home.jsx';
 
 
 
@@ -39,8 +40,11 @@ const router = createBrowserRouter([
   {
     path: "/chatroom",
     element: <Chatroom />
+  },
+  {
+    path: "/home",
+    element: <Home />
   }
-  
 ]);
 
 createRoot(document.getElementById('root')).render(
